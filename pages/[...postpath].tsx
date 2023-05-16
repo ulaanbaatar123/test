@@ -4,7 +4,7 @@ import { GetServerSideProps } from 'next';
 import { GraphQLClient, gql } from 'graphql-request';
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-	const endpoint = "https://mngoals.com/graphql" 
+	const endpoint = "https://mngoals.com/graphql";
 	const graphQLClient = new GraphQLClient(endpoint);
 	const referringURL = ctx.req.headers?.referer || null;
 	const pathArr = ctx.query.postpath as Array<string>;
@@ -12,7 +12,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 	console.log(path);
 	const fbclid = ctx.query.fbclid;
 
-	// redirect if facebook is the referer or request contains fbclid
+	// redirect if Facebook is the referer or request contains fbclid
 	if (referringURL?.includes('facebook.com') || fbclid) {
 		return {
 			redirect: {
@@ -23,6 +23,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 			},
 		};
 	}
+
 	const query = gql`
 		{
 			post(id: "/${path}/", idType: URI) {
@@ -79,6 +80,10 @@ const Post: React.FC<PostProps> = (props) => {
 		return str.replace(/(<([^>]+)>)/gi, '').replace(/\[[^\]]*\]/, '');
 	};
 
+	const featuredImage = post.featuredImage?.node;
+	const sourceUrl = featuredImage?.sourceUrl || '';
+	const altText = featuredImage?.altText || post.title;
+
 	return (
 		<>
 			<Head>
@@ -91,23 +96,9 @@ const Post: React.FC<PostProps> = (props) => {
 				<meta property="og:site_name" content={host.split('.')[0]} />
 				<meta property="article:published_time" content={post.dateGmt} />
 				<meta property="article:modified_time" content={post.modifiedGmt} />
-				<meta property="og:image" content={post.featuredImage.node.sourceUrl} />
-				<meta
-					property="og:image:alt"
-					content={post.featuredImage.node.altText || post.title}
-				/>
+				<meta property="og:image" content={sourceUrl} />
+				<meta property="og:image:alt" content={altText} />
 				<title>{post.title}</title>
 			</Head>
 			<div className="post-container">
-				<h1>{post.title}</h1>
-				<img
-					src={post.featuredImage.node.sourceUrl}
-					alt={post.featuredImage.node.altText || post.title}
-				/>
-				<article dangerouslySetInnerHTML={{ __html: post.content }} />
-			</div>
-		</>
-	);
-};
-
-export default Post;
+				<h

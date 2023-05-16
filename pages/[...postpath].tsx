@@ -53,6 +53,8 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 	if (!data.post) {
 		return {
 			notFound: true,
+			// Optional: You can also return a custom error message if desired
+			// notFound: { message: 'Post not found' },
 		};
 	}
 	return {
@@ -97,8 +99,4 @@ const Post: React.FC<PostProps> = (props) => {
 				<meta property="article:published_time" content={post.dateGmt} />
 				<meta property="article:modified_time" content={post.modifiedGmt} />
 				<meta property="og:image" content={sourceUrl} />
-				<meta property="og:image:alt" content={altText} />
-				<title>{post.title}</title>
-			</Head>
-			<div className="post-container">
-				<h
+				<meta property="og:image:alt"
